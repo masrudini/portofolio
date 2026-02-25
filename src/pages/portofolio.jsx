@@ -291,7 +291,7 @@ const Portofolio = () => {
           
           <div className="flex justify-center">
             <img
-              src="/foto.jpeg"
+              src="/foto.jpg"
               alt="Masrudini"
               className="w-72 rounded-2xl shadow-2xl hover:scale-105 transition duration-500"
             />
