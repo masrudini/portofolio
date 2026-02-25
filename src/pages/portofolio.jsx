@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
-import { Mail, Github, Instagram, ExternalLink, Menu, X, Sun, Moon } from "lucide-react";
+import { Mail, Github, Instagram, ExternalLink, Menu, X, Sun, Moon, Code, Database, Server, Cpu, Globe } from "lucide-react";
 
 
 function ProjectCard({ project, index }) {
@@ -16,7 +16,7 @@ function ProjectCard({ project, index }) {
       transition={{ duration: 0.6, delay: index * 0.2 }}
       viewport={{ once: true }}
     >
-      <Card className="rounded-2xl shadow-xl hover:scale-105 transition-transform duration-300">
+      <Card className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 backdrop-blur-lg hover:-translate-y-2 hover:shadow-2xl transition duration-500">
         <CardContent className="p-8">
           <h3 className="text-2xl font-semibold mb-4">
             {project.title}
@@ -39,7 +39,7 @@ function ProjectCard({ project, index }) {
             {project.tech.map((tech, i) => (
               <span
                 key={i}
-                className="text-xs bg-slate-200 dark:bg-slate-700 px-3 py-1 rounded-full"
+                className="text-xs font-mono bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 px-3 py-1 rounded-full"
               >
                 {tech}
               </span>
@@ -54,6 +54,36 @@ function ProjectCard({ project, index }) {
         </CardContent>
       </Card>
     </motion.div>
+  );
+}
+
+const floatingIcons = [
+  { Icon: Code, top: "10%", left: "15%" },
+  { Icon: Database, top: "25%", left: "80%" },
+  { Icon: Server, top: "70%", left: "10%" },
+  { Icon: Cpu, top: "60%", left: "75%" },
+  { Icon: Globe, top: "40%", left: "50%" },
+];
+
+function FloatingIcons() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {floatingIcons.map(({ Icon, top, left }, index) => (
+        <motion.div
+          key={index}
+          className="absolute text-blue-500/10 dark:text-blue-400/10"
+          style={{ top, left }}
+          animate={{ y: [0, -20, 0] }}
+          transition={{
+            duration: 6 + index,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        >
+          <Icon size={60} />
+        </motion.div>
+      ))}
+    </div>
   );
 }
 
@@ -101,11 +131,70 @@ const Portofolio = () => {
     },
   ];
 
+  const roles = [
+    "Full-Stack Developer",
+    "Laravel Specialist",
+    // "React Enthusiast",
+    "System Architect",
+  ];
+
+  const [text, setText] = useState("");
+  const [index, setIndex] = useState(0);
+  const [subIndex, setSubIndex] = useState(0);
+  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    if (index === roles.length) return;
+
+    if (subIndex === roles[index].length + 1 && !deleting) {
+      setTimeout(() => setDeleting(true), 1000);
+      return;
+    }
+
+    if (subIndex === 0 && deleting) {
+      setDeleting(false);
+      setIndex((prev) => (prev + 1) % roles.length);
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      setSubIndex((prev) => prev + (deleting ? -1 : 1));
+    }, deleting ? 40 : 80);
+
+    setText(roles[index].substring(0, subIndex));
+
+    return () => clearTimeout(timeout);
+  }, [subIndex, index, deleting]);
+
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalHeight =
+        document.documentElement.scrollHeight -
+        document.documentElement.clientHeight;
+
+      const progress =
+        (window.scrollY / totalHeight) * 100;
+
+      setScrollProgress(progress);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <div>
-      <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-500">
+      <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 relative overflow-hidden">
+         <div className="absolute inset-0 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:20px_20px] opacity-5 pointer-events-none"></div>
+        <div
+          className="fixed top-0 left-0 h-1 bg-blue-600 z-[9999] transition-all duration-150"
+          style={{ width: `${scrollProgress}%` }}
+        ></div>
         {/* Navbar */}
-        <nav className="fixed w-full backdrop-blur-md bg-white/70 dark:bg-slate-900/70 z-50">
+        <nav className="fixed w-full backdrop-blur-xl bg-white/60 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800 z-50">
           <div className="max-w-7xl mx-auto flex justify-end items-center p-4">
 
             <div className="hidden md:flex items-center gap-6">
@@ -139,43 +228,104 @@ const Portofolio = () => {
         </nav>
 
         {/* Hero */}
-        <section className="relative min-h-screen flex flex-col justify-center items-center text-center px-6 bg-cover bg-center bg-no-repeat"
-            style={ dark ? { backgroundImage: "url('./hero-dark.svg')" } : { backgroundImage: "url('./hero.svg')" }}>
-              <motion.h1
-                initial={{ opacity: 0, y: -30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7 }}
-                className="text-5xl md:text-7xl font-bold mb-6"
-              >
-                Building Digital Experiences That Convert
-              </motion.h1>
+        <section
+          className="relative min-h-screen flex flex-col justify-center items-center text-center px-6 bg-cover bg-center bg-no-repeat"
+          style={
+            dark
+              ? { backgroundImage: "url('/hero-dark.svg')" }
+              : { backgroundImage: "url('/hero.svg')" }
+          }
+        >
+          <div className="absolute inset-0 bg-white/60 dark:bg-slate-900/70 backdrop-blur-sm"></div>
+          <FloatingIcons />
 
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4, duration: 0.7 }}
-                className="max-w-2xl text-lg text-slate-600 dark:text-slate-300 mb-8"
+          <div className="relative z-10 max-w-4xl">
+            <motion.h1
+              initial={{ opacity: 0, y: -30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
+              className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight"
+            >
+              Hi, I’m{" "}
+              <span className="text-blue-600 dark:text-blue-400">
+                Masrudini
+              </span>
+              <br />
+              <span className="text-slate-700 dark:text-slate-300">
+                {text}
+                <span className="animate-pulse">|</span>
+              </span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.7 }}
+              className="text-lg md:text-xl text-slate-600 dark:text-slate-300 mb-8"
+            >
+              I build scalable web applications, modern UI experiences,
+              and high-performance systems for businesses.
+            </motion.p>
+
+            <div className="flex justify-center gap-4">
+              <a
+                href="#projects"
+                className="px-6 py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition"
               >
-                Web Developer specializing in high-performance,
-                scalable, and modern web applications for businesses.
-              </motion.p>
+                View Projects
+              </a>
+
+              <a
+                href="#contact"
+                className="px-6 py-3 rounded-xl border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              >
+                Contact Me
+              </a>
+            </div>
+          </div>
         </section>
 
         {/* About */}
-        <section id="about" className="py-24 px-6">
-          <div className="max-w-5xl mx-auto text-center">
-            <h2 className="text-4xl font-bold mb-8">About Me</h2>
-            <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-lg">
-              I help businesses transform ideas into powerful digital products.
-              My focus is performance, clean architecture, and user-centered
-              design. I deliver solutions that not only look good — but drive
-              results.
-            </p>
+       <section id="about" className="py-24 px-6">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+          
+          <div className="flex justify-center">
+            <img
+              src="/foto.jpeg"
+              alt="Masrudini"
+              className="w-72 rounded-2xl shadow-2xl hover:scale-105 transition duration-500"
+            />
           </div>
-          <img src="./foto.jpeg" alt="" className="rounded-3 w-1/6 mx-auto mt-5 rounded-lg hover:scale-105 transition-transform duration-300"/>
-          <p className="text-xl font-bold text-center mt-5">Masrudini, S.Kom</p>
-        </section>
 
+          <div>
+            <h2 className="text-4xl font-bold mb-6">
+              About <span className="text-blue-600 dark:text-blue-400">Me</span>
+            </h2>
+
+            <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-lg mb-6">
+              I specialize in building secure, scalable, and maintainable web systems.
+              My focus is clean architecture, performance optimization, and modern
+              frontend development.
+            </p>
+
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-xl">
+                ⚡ Performance Oriented
+              </div>
+              <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-xl">
+                🧠 Clean Architecture
+              </div>
+              <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-xl">
+                🔒 Secure Systems
+              </div>
+              <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-xl">
+                🚀 Scalable Apps
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
         {/* Projects */}
         <section id="projects" className="py-24 px-6 bg-slate-50 dark:bg-slate-800">
           <div className="max-w-7xl mx-auto">
@@ -189,39 +339,75 @@ const Portofolio = () => {
           </div>
         </section>
 
+        
         {/* Contact */}
-        <section id="contact" className="py-24 px-6">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-4xl font-bold mb-8">Let’s Build Something Great</h2>
-            <p className="text-slate-600 dark:text-slate-300 mb-10">
-              Ready to elevate your business with a modern website or web app?
-              Let’s collaborate.
+        <section
+          id="contact"
+          className="relative py-24 px-6 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-950 overflow-hidden"
+        >
+          {/* Background Glow */}
+          <div className="absolute inset-0 -z-10">
+            <div className="absolute w-96 h-96 bg-blue-500/20 blur-3xl rounded-full top-20 left-10"></div>
+            <div className="absolute w-96 h-96 bg-purple-500/20 blur-3xl rounded-full bottom-10 right-10"></div>
+          </div>
+
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-4xl font-bold mb-6">Let’s Connect</h2>
+            <p className="text-slate-600 dark:text-slate-400 mb-12">
+              Feel free to reach out through any platform below.
             </p>
 
-            <div className="flex justify-center gap-6 flex-wrap">
-              <Button asChild className="rounded-2xl px-6" variant="outline">
-                <a
-                  href="https://www.instagram.com/mas.rudini/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Instagram className="mr-2 h-4 w-4" /> Instagram
-                </a>
-              </Button>
-              <Button asChild className="rounded-2xl px-6 shadow-lg" variant="outline">
-                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=mas.rudini13@gmail.com">
-                  <Mail className="mr-2 h-4 w-4" /> Email
-                </a>
-              </Button>
-             <Button asChild className="rounded-2xl px-6" variant="outline">
-                <a
-                  href="https://github.com/masrudini"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Github className="mr-2 h-4 w-4" /> GitHub
-                </a>
-              </Button>
+            <div className="flex justify-center gap-8 flex-wrap">
+
+              {/* Instagram */}
+              <a
+                href="https://instagram.com/mas.rudini"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex flex-col items-center p-8 rounded-3xl 
+                backdrop-blur-xl bg-white/40 dark:bg-white/10
+                border border-white/30 dark:border-white/10
+                shadow-xl hover:shadow-2xl
+                transition-all duration-300 hover:-translate-y-2"
+              >
+                <Instagram className="w-8 h-8 text-pink-500 group-hover:scale-110 transition" />
+                <span className="mt-4 font-medium text-slate-800 dark:text-white">
+                  Instagram
+                </span>
+              </a>
+
+              {/* Email */}
+              <a
+                href="mailto:mas.rudini13@gmail.com"
+                className="group flex flex-col items-center p-8 rounded-3xl 
+                backdrop-blur-xl bg-white/40 dark:bg-white/10
+                border border-white/30 dark:border-white/10
+                shadow-xl hover:shadow-2xl
+                transition-all duration-300 hover:-translate-y-2"
+              >
+                <Mail className="w-8 h-8 mx-5 text-blue-500 group-hover:scale-110 transition" />
+                <span className="mt-4 font-medium text-slate-800 dark:text-white">
+                  Email
+                </span>
+              </a>
+
+              {/* GitHub */}
+              <a
+                href="https://github.com/masrudini"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex flex-col items-center p-8 rounded-3xl 
+                backdrop-blur-xl bg-white/40 dark:bg-white/10
+                border border-white/30 dark:border-white/10
+                shadow-xl hover:shadow-2xl
+                transition-all duration-300 hover:-translate-y-2"
+              >
+                <Github className="w-8 h-8 mx-5 text-slate-800 dark:text-white group-hover:scale-110 transition" />
+                <span className="mt-4 font-medium text-slate-800 dark:text-white">
+                  GitHub
+                </span>
+              </a>
+
             </div>
           </div>
         </section>
