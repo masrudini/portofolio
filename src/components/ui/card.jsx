@@ -19,7 +19,7 @@ export const CardContent = React.forwardRef(({ className, ...props }, ref) => {
   return (
     <div
       ref={ref}
-      className={cn("p-6", className)}
+      className={cn("p-8", className)}
       {...props}
     />
   );

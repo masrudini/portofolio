@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { Card, CardContent } from "../components/ui/card";
-import { Button } from "../components/ui/button";
-import { Mail, Github, Instagram, ExternalLink, Menu, X, Sun, Moon, Code, Database, Server, Cpu, Globe } from "lucide-react";
+import { ExternalLink, Code, Database, Server, Cpu, Globe } from "lucide-react";
+import {Button}  from "../components/ui/button";
+import {motion} from "framer-motion";
+import Navbar from "../components/ui/navbar";
+import Footer from "../components/ui/footer";
+import FloatingIcons from "../components/ui/floatingIcon";
 
 
 function ProjectCard({ project, index }) {
@@ -17,7 +20,7 @@ function ProjectCard({ project, index }) {
       viewport={{ once: true }}
     >
       <Card className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 backdrop-blur-lg hover:-translate-y-2 hover:shadow-2xl transition duration-500">
-        <CardContent className="p-8">
+        <CardContent>
           <h3 className="text-2xl font-semibold mb-4">
             {project.title}
           </h3>
@@ -57,55 +60,15 @@ function ProjectCard({ project, index }) {
   );
 }
 
-const floatingIcons = [
-  { Icon: Code, top: "10%", left: "15%" },
-  { Icon: Database, top: "25%", left: "80%" },
-  { Icon: Server, top: "70%", left: "10%" },
-  { Icon: Cpu, top: "60%", left: "75%" },
-  { Icon: Globe, top: "40%", left: "50%" },
-];
-
-function FloatingIcons() {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {floatingIcons.map(({ Icon, top, left }, index) => (
-        <motion.div
-          key={index}
-          className="absolute text-blue-500/10 dark:text-blue-400/10"
-          style={{ top, left }}
-          animate={{ y: [0, -20, 0] }}
-          transition={{
-            duration: 6 + index,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        >
-          <Icon size={60} />
-        </motion.div>
-      ))}
-    </div>
-  );
-}
-
 const Portofolio = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
 
-  const [dark, setDark] = useState(() => {
-    const saved = localStorage.getItem("theme");
-    if (saved) return saved === "dark";
-
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
-  });
-
-  useEffect(() => {
-    if (dark) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
-  }, [dark]);
+  const floatingIcons = [
+    { Icon: Code, top: "10%", left: "15%" },
+    { Icon: Database, top: "25%", left: "80%" },
+    { Icon: Server, top: "70%", left: "10%" },
+    { Icon: Cpu, top: "60%", left: "75%" },
+    { Icon: Globe, top: "40%", left: "50%" },
+    ];
 
   const projects = [
     {
@@ -134,7 +97,6 @@ const Portofolio = () => {
   const roles = [
     "Full-Stack Developer",
     "Laravel Specialist",
-    // "React Enthusiast",
     "System Architect",
   ];
 
@@ -188,56 +150,19 @@ const Portofolio = () => {
   return (
     <div>
       <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 relative overflow-hidden">
-         <div className="absolute inset-0 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:20px_20px] opacity-5 pointer-events-none"></div>
-        <div
-          className="fixed top-0 left-0 h-1 bg-blue-600 z-[9999] transition-all duration-150"
-          style={{ width: `${scrollProgress}%` }}
-        ></div>
+        <div className="absolute inset-0 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:20px_20px] opacity-7 pointer-events-none"></div>
+        <div className="fixed top-0 left-0 h-1 bg-blue-600 z-[9999] transition-all duration-150"
+          style={{ width: `${scrollProgress}%` }}></div>
+
         {/* Navbar */}
-        <nav className="fixed w-full backdrop-blur-xl bg-white/60 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800 z-50">
-          <div className="max-w-7xl mx-auto flex justify-end items-center p-4">
-
-            <div className="hidden md:flex items-center gap-6">
-              <a href="#about" className="hover:text-primary">About</a>
-              <a href="#projects" className="hover:text-primary">Projects</a>
-              <a href="#contact" className="hover:text-primary">Contact</a>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setDark(!dark)}
-                className="rounded-2xl"
-              >
-                {dark ? <Sun size={18} /> : <Moon size={18} />}
-              </Button>
-            </div>
-
-            <div className="md:hidden">
-              <Button variant="ghost" size="icon" onClick={() => setMenuOpen(!menuOpen)}>
-                {menuOpen ? <X /> : <Menu />}
-              </Button>
-            </div>
-          </div>
-
-          {menuOpen && (
-            <div className="md:hidden px-4 pb-4 space-y-2">
-              <a href="#about" className="block">About</a>
-              <a href="#projects" className="block">Projects</a>
-              <a href="#contact" className="block">Contact</a>
-            </div>
-          )}
-        </nav>
+        <Navbar />
 
         {/* Hero */}
         <section
-          className="relative min-h-screen flex flex-col justify-center items-center text-center px-6 bg-cover bg-center bg-no-repeat"
-          style={
-            dark
-              ? { backgroundImage: "url('/hero-dark.svg')" }
-              : { backgroundImage: "url('/hero.svg')" }
-          }
+          className="relative min-h-screen flex flex-col justify-center items-center text-center px-6"
         >
           <div className="absolute inset-0 bg-white/60 dark:bg-slate-900/70 backdrop-blur-sm"></div>
-          <FloatingIcons />
+          <FloatingIcons icon={floatingIcons} />
 
           <div className="relative z-10 max-w-4xl">
             <motion.h1
@@ -286,131 +211,62 @@ const Portofolio = () => {
         </section>
 
         {/* About */}
-       <section id="about" className="py-24 px-6">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
-          
-          <div className="flex justify-center">
-            <img
-              src="/foto.jpg"
-              alt="Masrudini"
-              className="w-72 rounded-2xl shadow-2xl hover:scale-105 transition duration-500"
-            />
-          </div>
+        <section id="about" className="py-24 px-6">
+          <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+            
+            <div className="flex justify-center">
+              <img
+                src="/foto.jpg"
+                alt="Masrudini"
+                className="w-72 rounded-2xl shadow-2xl hover:scale-105 transition duration-500"
+              />
+            </div>
 
-          <div>
-            <h2 className="text-4xl font-bold mb-6">
-              About <span className="text-blue-600 dark:text-blue-400">Me</span>
-            </h2>
+            <div>
+              <h2 className="text-4xl font-bold mb-6">
+                About <span className="text-blue-600 dark:text-blue-400">Me</span>
+              </h2>
 
-            <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-lg mb-6">
-              I specialize in building secure, scalable, and maintainable web systems.
-              My focus is clean architecture, performance optimization, and modern
-              frontend development.
-            </p>
+              <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-lg mb-6">
+                I specialize in building secure, scalable, and maintainable web systems.
+                My focus is clean architecture, performance optimization, and modern
+                frontend development.
+              </p>
 
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-xl">
-                ⚡ Performance Oriented
-              </div>
-              <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-xl">
-                🧠 Clean Architecture
-              </div>
-              <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-xl">
-                🔒 Secure Systems
-              </div>
-              <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-xl">
-                🚀 Scalable Apps
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-xl">
+                  ⚡ Performance Oriented
+                </div>
+                <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-xl">
+                  🧠 Clean Architecture
+                </div>
+                <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-xl">
+                  🔒 Secure Systems
+                </div>
+                <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-xl">
+                  🚀 Scalable Apps
+                </div>
               </div>
             </div>
-          </div>
 
-        </div>
-      </section>
+          </div>
+        </section>
+
         {/* Projects */}
         <section id="projects" className="py-24 px-6 bg-slate-50 dark:bg-slate-800">
           <div className="max-w-7xl mx-auto">
             <h2 className="text-4xl font-bold text-center mb-16">Featured Projects</h2>
 
             <div className="grid md:grid-cols-3 gap-10">
-             {projects.map((project, index) => (
+              {projects.map((project, index) => (
                 <ProjectCard key={index} project={project} index={index} />
               ))}
             </div>
           </div>
         </section>
 
-        
         {/* Contact */}
-        <section
-          id="contact"
-          className="relative py-24 px-6 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-950 overflow-hidden"
-        >
-          {/* Background Glow */}
-          <div className="absolute inset-0 -z-10">
-            <div className="absolute w-96 h-96 bg-blue-500/20 blur-3xl rounded-full top-20 left-10"></div>
-            <div className="absolute w-96 h-96 bg-purple-500/20 blur-3xl rounded-full bottom-10 right-10"></div>
-          </div>
-
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl font-bold mb-6">Let’s Connect</h2>
-            <p className="text-slate-600 dark:text-slate-400 mb-12">
-              Feel free to reach out through any platform below.
-            </p>
-
-            <div className="flex justify-center gap-8 flex-wrap">
-
-              {/* Instagram */}
-              <a
-                href="https://instagram.com/mas.rudini"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex flex-col items-center p-8 rounded-3xl 
-                backdrop-blur-xl bg-white/40 dark:bg-white/10
-                border border-white/30 dark:border-white/10
-                shadow-xl hover:shadow-2xl
-                transition-all duration-300 hover:-translate-y-2"
-              >
-                <Instagram className="w-8 h-8 text-pink-500 group-hover:scale-110 transition" />
-                <span className="mt-4 font-medium text-slate-800 dark:text-white">
-                  Instagram
-                </span>
-              </a>
-
-              {/* Email */}
-              <a
-                href="mailto:mas.rudini13@gmail.com"
-                className="group flex flex-col items-center p-8 rounded-3xl 
-                backdrop-blur-xl bg-white/40 dark:bg-white/10
-                border border-white/30 dark:border-white/10
-                shadow-xl hover:shadow-2xl
-                transition-all duration-300 hover:-translate-y-2"
-              >
-                <Mail className="w-8 h-8 mx-5 text-blue-500 group-hover:scale-110 transition" />
-                <span className="mt-4 font-medium text-slate-800 dark:text-white">
-                  Email
-                </span>
-              </a>
-
-              {/* GitHub */}
-              <a
-                href="https://github.com/masrudini"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex flex-col items-center p-8 rounded-3xl 
-                backdrop-blur-xl bg-white/40 dark:bg-white/10
-                border border-white/30 dark:border-white/10
-                shadow-xl hover:shadow-2xl
-                transition-all duration-300 hover:-translate-y-2"
-              >
-                <Github className="w-8 h-8 mx-5 text-slate-800 dark:text-white group-hover:scale-110 transition" />
-                <span className="mt-4 font-medium text-slate-800 dark:text-white">
-                  GitHub
-                </span>
-              </a>
-
-            </div>
-          </div>
-        </section>
+        <Footer />
       </div>
     </div>
   );
